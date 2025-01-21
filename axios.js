@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import axios from "axios";
+import * as fs from 'fs';
 
 (async () => {
     // eslint-disable-next-line no-undef
@@ -55,7 +56,23 @@ import axios from "axios";
         }
     });
 
-    console.log(response);
+    const products = response.data.products;
+
+    let output = '';
+    for (const product of products) {
+        output += `
+            Название товара: ${product.name}
+            Ссылка на изображение: ${product.images[0].url}
+            Рейтинг: ${product.rating}
+            Количество отзывов: ${product.reviews}
+            Цена: ${product.price}
+            Акционная цена: ${product.discount}
+            Цена до акции: ${product.oldPrice}
+            Размер скидки: ${product.discountPercent}
+        `
+    }
+
+    fs.writeFileSync('products-api.txt', output);
 
     await browser.close();
 
